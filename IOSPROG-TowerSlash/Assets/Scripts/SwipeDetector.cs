@@ -1,47 +1,73 @@
+using System.IO.Pipes;
 using UnityEngine;
 
 public class SwipeDetector : MonoBehaviour
 {
-    private Vector2 _fingerDownPos;
-    private Vector2 _fingerUpPos;
-    [SerializeField] private float _minDistanceForSwipe = 20f;
+    private Vector2 _swipeStartPos;
+    private bool _isSwiping = false;
+
+    [Header("Sensitivity Settings")]
+    [SerializeField] private float _minSwipeDistance = 30f;
 
     public SwipeDirection? DetectSwipe()
     {
+        // touch input
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
+
             if (touch.phase == TouchPhase.Began)
             {
-                _fingerDownPos = touch.position;
-                _fingerUpPos = touch.position;
+                _swipeStartPos = touch.position;
+                _isSwiping = true;
             }
-            if (touch.phase == TouchPhase.Ended)
+            else if (touch.phase == TouchPhase.Moved && _isSwiping)
             {
-                _fingerUpPos = touch.position;
-                return CalculateSwipe();
+                Vector2 currentDelta = touch.position - _swipeStartPos;
+                if (currentDelta.magnitude >= _minSwipeDistance)
+                {
+                    _isSwiping = false;
+                    return CalculateDirection(currentDelta);
+                }
+            }
+            else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            {
+                _isSwiping = false;
             }
         }
 
-        // mouse click/drag inputs
-        if (Input.GetMouseButtonDown(0)) _fingerDownPos = Input.mousePosition;
-        if (Input.GetMouseButtonUp(0))
+        // mouse input
+        if (Input.GetMouseButtonDown(0))
         {
-            _fingerUpPos = Input.mousePosition;
-            return CalculateSwipe();
+            _swipeStartPos = Input.mousePosition;
+            _isSwiping = true;
+        }
+        else if (Input.GetMouseButton(0) && _isSwiping)
+        {
+            Vector2 currentDelta = (Vector2)Input.mousePosition - _swipeStartPos;
+            if (currentDelta.magnitude >= _minSwipeDistance)
+            {
+                _isSwiping = false;
+                return CalculateDirection(currentDelta);
+            }
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            _isSwiping = false;
         }
 
         return null;
     }
 
-    private SwipeDirection? CalculateSwipe()
+    private SwipeDirection CalculateDirection(Vector2 delta)
     {
-        Vector2 delta = _fingerUpPos - _fingerDownPos;
-        if (delta.magnitude < _minDistanceForSwipe) return null;
-
         if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+        {
             return delta.x > 0 ? SwipeDirection.Right : SwipeDirection.Left;
+        }
         else
+        {
             return delta.y > 0 ? SwipeDirection.Up : SwipeDirection.Down;
+        }
     }
 }

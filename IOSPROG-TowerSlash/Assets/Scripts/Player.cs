@@ -1,3 +1,4 @@
+using System.IO.Pipes;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,6 +9,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         SwipeDirection? swipe = _swipeDetector.DetectSwipe();
+
         if (swipe.HasValue && _currentTargetEnemy != null)
         {
             _currentTargetEnemy.CheckSwipe(swipe.Value);
@@ -17,5 +19,28 @@ public class Player : MonoBehaviour
     public void SetCurrentTarget(Enemy enemy)
     {
         _currentTargetEnemy = enemy;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Enemy enemy = collision.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            SetCurrentTarget(enemy);
+            enemy.SetCanBeHit(true);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        Enemy enemy = collision.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            if (_currentTargetEnemy == enemy)
+            {
+                SetCurrentTarget(null);
+            }
+            enemy.SetCanBeHit(false);
+        }
     }
 }

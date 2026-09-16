@@ -32,7 +32,6 @@ public class Enemy : MonoBehaviour
     private SwipeDirection _requiredSwipe;
     private ArrowType _arrowType;
     private bool _canBeHit = false;
-    private Player _currentPlayer;
 
     private void Start()
     {
@@ -41,44 +40,22 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        // moves the enemies down
         transform.position += Vector3.down * _enemySpeed * Time.deltaTime;
 
-        // clean ups the missed enemies
         if (transform.position.y < -10f)
         {
             Destroy(gameObject);
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void SetCanBeHit(bool state)
     {
-        Player player = collision.GetComponentInParent<Player>();
-        if (player != null)
-        {
-            _currentPlayer = player;
-            _canBeHit = true;
-            _currentPlayer.SetCurrentTarget(this);
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        Player player = collision.GetComponentInParent<Player>();
-        if (player != null)
-        {
-            if (_currentPlayer == player)
-            {
-                _currentPlayer.SetCurrentTarget(null);
-                _currentPlayer = null;
-            }
-            _canBeHit = false;
-        }
+        _canBeHit = state;
     }
 
     public void CheckSwipe(SwipeDirection swipeDirection)
     {
-        if (!_canBeHit || _currentPlayer == null) return;
+        if (!_canBeHit) return;
 
         if (swipeDirection == _requiredSwipe)
         {
@@ -86,14 +63,14 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            Debug.Log("wrong swipes!");
+            Debug.Log("Wrong Swipe!");
         }
     }
 
     private void GenerateArrow()
     {
         _displayedDirection = (SwipeDirection)Random.Range(0, 4);
-        _arrowType = (ArrowType)Random.Range(0, 2); // 0 = Green, 1 = Red
+        _arrowType = (ArrowType)Random.Range(0, 2);
 
         switch (_arrowType)
         {
@@ -139,11 +116,7 @@ public class Enemy : MonoBehaviour
 
     private void KilledByPlayer()
     {
-        Debug.Log("enemy slained!");
-        if (_currentPlayer != null)
-        {
-            _currentPlayer.SetCurrentTarget(null);
-        }
+        Debug.Log("Enemy Slashed!");
         Destroy(gameObject);
     }
 }
