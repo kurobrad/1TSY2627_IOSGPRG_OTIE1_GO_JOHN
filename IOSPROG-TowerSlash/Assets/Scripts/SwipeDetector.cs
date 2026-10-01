@@ -1,73 +1,81 @@
-using System.IO.Pipes;
 using UnityEngine;
 
 public class SwipeDetector : MonoBehaviour
 {
-    private Vector2 _swipeStartPos;
-    private bool _isSwiping = false;
+    [Header("Sensitivity")]
+    [Tooltip("Minimum drag distance in screen percentage (0.04 = 4% of screen height)")]
+    [SerializeField] private float _minSwipeDistancePercent = 0.04f;
 
-    [Header("Sensitivity Settings")]
-    [SerializeField] private float _minSwipeDistance = 30f;
+    private Vector2 _startPosition;
+    private Vector2 _endPosition;
+    private SwipeDirection? _bufferedSwipe = null;
 
     public SwipeDirection? DetectSwipe()
     {
-        // touch input
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
+        // poll input events
+        ProcessTouchInput();
+        ProcessMouseInput();
 
-            if (touch.phase == TouchPhase.Began)
-            {
-                _swipeStartPos = touch.position;
-                _isSwiping = true;
-            }
-            else if (touch.phase == TouchPhase.Moved && _isSwiping)
-            {
-                Vector2 currentDelta = touch.position - _swipeStartPos;
-                if (currentDelta.magnitude >= _minSwipeDistance)
-                {
-                    _isSwiping = false;
-                    return CalculateDirection(currentDelta);
-                }
-            }
-            else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-            {
-                _isSwiping = false;
-            }
-        }
-
-        // mouse input
-        if (Input.GetMouseButtonDown(0))
-        {
-            _swipeStartPos = Input.mousePosition;
-            _isSwiping = true;
-        }
-        else if (Input.GetMouseButton(0) && _isSwiping)
-        {
-            Vector2 currentDelta = (Vector2)Input.mousePosition - _swipeStartPos;
-            if (currentDelta.magnitude >= _minSwipeDistance)
-            {
-                _isSwiping = false;
-                return CalculateDirection(currentDelta);
-            }
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            _isSwiping = false;
-        }
-
-        return null;
+        SwipeDirection? swipeToReturn = _bufferedSwipe;
+        _bufferedSwipe = null; // clear after consumptions so it registers once
+        return swipeToReturn;
     }
 
-    private SwipeDirection CalculateDirection(Vector2 delta)
+    private void ProcessTouchInput()
     {
+        if (Input.touchCount == 0) return;
+
+        Touch touch = Input.GetTouch(0);
+
+        if (touch.phase == TouchPhase.Began)
+        {
+            _startPosition = touch.position;
+            _endPosition = touch.position;
+        }
+        ;
+
+        if (touch.phase == TouchPhase.Moved)
+        {
+            _endPosition = touch.position;
+        }
+
+        if (touch.phase == TouchPhase.Ended)
+        {
+            _endPosition = touch.position;
+            EvaluateSwipe();
+        }
+    }
+
+    private void ProcessMouseInput()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _startPosition = Input.mousePosition;
+            _endPosition = Input.mousePosition;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            _endPosition = Input.mousePosition;
+            EvaluateSwipe();
+        }
+    }
+
+    private void EvaluateSwipe()
+    {
+        float minDistancePixels = Screen.height * _minSwipeDistancePercent;
+        Vector2 delta = _endPosition - _startPosition;
+
+        if (delta.magnitude < minDistancePixels) return;
+
+        // determine dominant direction
         if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
         {
-            return delta.x > 0 ? SwipeDirection.Right : SwipeDirection.Left;
+            _bufferedSwipe = delta.x > 0 ? SwipeDirection.Right : SwipeDirection.Left;
         }
         else
         {
-            return delta.y > 0 ? SwipeDirection.Up : SwipeDirection.Down;
+            _bufferedSwipe = delta.y > 0 ? SwipeDirection.Up : SwipeDirection.Down;
         }
     }
 }

@@ -2,12 +2,37 @@ using UnityEngine;
 
 public class ScrollingBackground : MonoBehaviour
 {
-    [SerializeField] public float speed;
+    [SerializeField] public float speed = 0.05f;
+    [SerializeField] private float dashSpeedMultiplier = 4f;
     [SerializeField] private Renderer bgRenderer;
 
-    // Update is called once per frame
-    void Update()
+    private Material _mat;
+
+    private void Start()
     {
-        bgRenderer.material.mainTextureOffset += new Vector2(speed * Time.deltaTime, 0);
+        if (bgRenderer == null)
+        {
+            bgRenderer = GetComponent<Renderer>();
+        }
+
+        if (bgRenderer != null)
+        {
+            _mat = bgRenderer.material;
+        }
+    }
+
+    private void Update()
+    {
+        if (_mat == null) return;
+
+        float currentSpeed = speed;
+
+        // dash system background effect
+        if (DashSystem.instance != null && DashSystem.instance.IsDashing)
+        {
+            currentSpeed *= dashSpeedMultiplier;
+        }
+
+        _mat.mainTextureOffset += new Vector2(currentSpeed * Time.deltaTime, 0);
     }
 }

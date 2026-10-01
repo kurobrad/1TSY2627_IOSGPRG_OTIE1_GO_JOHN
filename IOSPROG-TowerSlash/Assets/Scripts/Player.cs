@@ -1,32 +1,66 @@
-using System.IO.Pipes;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private SwipeDetector _swipeDetector;
-    private Enemy _currentTargetEnemy;
 
-    private void Update()
+    // tracks the enemies in the slash range
+    private List<Enemy> _enemiesInRange = new List<Enemy>();
+
+    private void Start()
     {
-        SwipeDirection? swipe = _swipeDetector.DetectSwipe();
-
-        if (swipe.HasValue && _currentTargetEnemy != null)
+        if (_swipeDetector == null)
         {
-            _currentTargetEnemy.CheckSwipe(swipe.Value);
+            _swipeDetector = FindFirstObjectByType<SwipeDetector>();
         }
     }
 
-    public void SetCurrentTarget(Enemy enemy)
+    private void Update()
     {
-        _currentTargetEnemy = enemy;
+        // clean up any destroyed references
+        _enemiesInRange.RemoveAll(enemy => enemy == null);
+
+        if (_swipeDetector == null) return;
+
+        SwipeDirection? swipe = _swipeDetector.DetectSwipe();
+
+        if (swipe.HasValue && _enemiesInRange.Count > 0)
+        {
+            Enemy targetEnemy = GetClosestEnemy();
+            if (targetEnemy != null)
+            {
+                targetEnemy.CheckSwipe(swipe.Value);
+            }
+        }
+    }
+
+    // finds the closest enemy to the player and prioritizes it
+    private Enemy GetClosestEnemy()
+    {
+        Enemy closest = null;
+        float lowestY = float.MaxValue;
+
+        foreach (Enemy enemy in _enemiesInRange)
+        {
+            if (enemy == null) continue;
+
+            if (enemy.transform.position.y < lowestY)
+            {
+                lowestY = enemy.transform.position.y;
+                closest = enemy;
+            }
+        }
+
+        return closest;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Enemy enemy = collision.GetComponent<Enemy>();
-        if (enemy != null)
+        if (enemy != null && !_enemiesInRange.Contains(enemy))
         {
-            SetCurrentTarget(enemy);
+            _enemiesInRange.Add(enemy);
             enemy.SetCanBeHit(true);
         }
     }
@@ -36,10 +70,7 @@ public class Player : MonoBehaviour
         Enemy enemy = collision.GetComponent<Enemy>();
         if (enemy != null)
         {
-            if (_currentTargetEnemy == enemy)
-            {
-                SetCurrentTarget(null);
-            }
+            _enemiesInRange.Remove(enemy);
             enemy.SetCanBeHit(false);
         }
     }

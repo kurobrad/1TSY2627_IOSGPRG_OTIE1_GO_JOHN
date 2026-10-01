@@ -105,8 +105,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 311016b78fea6b04bbecffd2871a92ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  _enemySpeed: 4
+  _enemySpeed: 3
   _arrowRenderer: {fileID: 5673228311097080910}
+  _yellowShuffleInterval: 0.15
+  _lockDistance: 6
   _greenArrowSprites:
   - {fileID: 21300000, guid: 69f34df48b8c2d6469bafd31a7ef343f, type: 3}
   - {fileID: 21300000, guid: 97d39e4fa1cc7b546b02e6e8c4801fda, type: 3}
@@ -117,6 +119,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d2d5d23a07225b54da9ad20f58493756, type: 3}
   - {fileID: 21300000, guid: 4c0493e2450e9c240a2644034bad5e96, type: 3}
   - {fileID: 21300000, guid: 6e1116d70a3ce4741adf180859bb5e17, type: 3}
+  _yellowArrowSprites:
+  - {fileID: 21300000, guid: 71fe75db8bc8a6e45b13cacbf3c56b4c, type: 3}
+  - {fileID: 21300000, guid: 67d501e01d1cd04438a3c999d261e88f, type: 3}
+  - {fileID: 21300000, guid: a6a407c8e86659d4997986d685f4ccd7, type: 3}
+  - {fileID: 21300000, guid: e2700bf3478c0c64db88718e2b0000f6, type: 3}
+  _extraLifePowerupPrefab: {fileID: 0}
 --- !u!61 &1240565679087134079
 BoxCollider2D:
   m_ObjectHideFlags: 0
