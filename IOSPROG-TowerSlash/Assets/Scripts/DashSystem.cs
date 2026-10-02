@@ -103,4 +103,9 @@ public class DashSystem : MonoBehaviour
             _dashFillImage.fillAmount = (float)_dashCharge / _maxDashCharge;
         }
     }
+
+    public void SetDashGainOnKill(int amount)
+    {
+        _dashGainOnKill = amount;
+    }
 }

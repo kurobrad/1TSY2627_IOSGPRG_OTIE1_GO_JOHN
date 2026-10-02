@@ -9,10 +9,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private int _maxHealth = 3;
 
     [Header("UI References")]
-    [Tooltip("Assign if using a UI Slider for Health")]
     [SerializeField] private Slider _healthSlider;
-
-    [Tooltip("Assign if using a UI Filled Image for Health Bar")]
     [SerializeField] private Image _healthFillImage;
 
     private int _currentHealth;
@@ -72,5 +69,12 @@ public class PlayerStats : MonoBehaviour
         {
             _healthFillImage.fillAmount = healthRatio;
         }
+    }
+
+    public void SetMaxHealth(int newMaxHealth)
+    {
+        _maxHealth = newMaxHealth;
+        _currentHealth = _maxHealth;
+        UpdateHealthUI();
     }
 }

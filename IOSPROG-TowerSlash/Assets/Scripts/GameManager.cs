@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _gameOverPanel;
     [SerializeField] private GameObject _pausePanel;
 
-    [Header("Score UI (Optional)")]
+    [Header("Score UI")]
     [SerializeField] private TextMeshProUGUI _hudScoreText;
     [SerializeField] private TextMeshProUGUI _gameOverScoreText;
 
@@ -34,23 +34,20 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Time.timeScale = 1f;
         _isGameOver = false;
         _isGamePaused = false;
         _score = 0;
+
+        AudioListener.pause = false;
 
         if (_gameOverPanel != null) _gameOverPanel.SetActive(false);
         if (_pausePanel != null) _pausePanel.SetActive(false);
 
         UpdateScoreUI();
-    }
 
-    private void Update()
-    {
-        // Toggle pause via Escape or P key during gameplay
-        if ((Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P)) && !_isGameOver)
+        if (SoundManager.instance != null)
         {
-            TogglePause();
+            SoundManager.instance.ResumeBGM();
         }
     }
 
@@ -72,7 +69,6 @@ public class GameManager : MonoBehaviour
     {
         if (_isGameOver) return;
 
-        Debug.Log("Game Over Triggered!");
         _isGameOver = true;
         Time.timeScale = 0f;
 
@@ -84,6 +80,11 @@ public class GameManager : MonoBehaviour
         if (_gameOverPanel != null)
         {
             _gameOverPanel.SetActive(true);
+        }
+
+        if (SoundManager.instance != null)
+        {
+            SoundManager.instance.PauseBGM();
         }
     }
 
@@ -99,7 +100,13 @@ public class GameManager : MonoBehaviour
             _pausePanel.SetActive(_isGamePaused);
         }
 
-        Debug.Log(_isGamePaused ? "Game Paused" : "Game Resumed");
+        if (SoundManager.instance != null)
+        {
+            if (_isGamePaused) SoundManager.instance.PauseBGM();
+            else SoundManager.instance.ResumeBGM();
+        }
+
+        Debug.Log(_isGamePaused ? "game paused" : "game resumed");
     }
 
     public void BTN_Resume()

@@ -32,7 +32,6 @@ public class SwipeDetector : MonoBehaviour
             _startPosition = touch.position;
             _endPosition = touch.position;
         }
-        ;
 
         if (touch.phase == TouchPhase.Moved)
         {
