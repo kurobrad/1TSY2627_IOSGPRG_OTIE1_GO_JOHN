@@ -3,40 +3,38 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerWeapon))]
 public class Player : MonoBehaviour
 {
-    public static Player Instance { get; private set; }
+    [SerializeField] private float _maxHp = 100f;
+    private float _currentHp;
+    private PlayerWeapon _playerWeapon;
 
-    [Header("Health Configs")]
-    [SerializeField] private float _currentHealth = 100f;
-    [SerializeField] private float _maxHealth = 100f;
-
-    public float PlayerHP => _currentHealth;
-    public float MaxHP => _maxHealth;
-    public PlayerWeapon WeaponManager { get; private set; }
+    public float MaxHP => _maxHp;
+    public float PlayerHP => _currentHp;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        _currentHp = _maxHp;
+        _playerWeapon = GetComponent<PlayerWeapon>();
+    }
+
+    public void EquipWeaponFromPickup(WeaponPickup.WeaponType weaponType, int loadedAmmo)
+    {
+        if (_playerWeapon != null)
         {
-            Destroy(gameObject);
-            return;
+            _playerWeapon.EquipWeaponFromPickup(weaponType, loadedAmmo);
         }
-
-        Instance = this;
-        WeaponManager = GetComponent<PlayerWeapon>();
     }
 
-    public void TakeDamage(float amount)
+    public void AddAmmo(BulletPickup.AmmoType ammoType, int amount)
     {
-        _currentHealth = Mathf.Max(0f, _currentHealth - amount);
+        if (_playerWeapon != null)
+        {
+            _playerWeapon.AddAmmo(ammoType, amount);
+        }
     }
 
-    public void Heal(float amount)
+    public void TakeDamage(float damage)
     {
-        _currentHealth = Mathf.Min(_maxHealth, _currentHealth + amount);
-    }
-
-    public void AddAmmo(BulletPickup.AmmoType type, int amount)
-    {
-        WeaponManager?.AddAmmo(type, amount);
+        _currentHp = Mathf.Max(0f, _currentHp - damage);
+        Debug.Log($"Player HP: {_currentHp}/{_maxHp}");
     }
 }

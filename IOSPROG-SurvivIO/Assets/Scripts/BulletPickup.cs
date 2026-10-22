@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class BulletPickup : MonoBehaviour
 {
     public enum AmmoType
@@ -9,15 +10,23 @@ public class BulletPickup : MonoBehaviour
         FiveFiveSix
     }
 
-    [Header("Loot Configuration")]
-    [SerializeField] private AmmoType _type;
-    [SerializeField] private int _ammoAmount = 15;
+    [Header("Ammo Settings")]
+    [SerializeField] private AmmoType _ammoType;
+    [SerializeField] private int _amount = 15;
 
-    private void OnTriggerEnter2D(Collider2D collider)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (collider.TryGetComponent<Player>(out var player))
+        Player player = other.GetComponent<Player>();
+
+        if (player != null)
         {
-            player.AddAmmo(_type, _ammoAmount);
+            player.AddAmmo(_ammoType, _amount);
+
+            if (SpawnManager.Instance != null)
+            {
+                SpawnManager.Instance.NotifyAmmoTaken();
+            }
+
             Destroy(gameObject);
         }
     }

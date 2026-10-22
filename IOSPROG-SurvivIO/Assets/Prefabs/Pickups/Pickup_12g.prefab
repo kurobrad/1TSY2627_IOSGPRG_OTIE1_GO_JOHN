@@ -151,5 +151,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c23b6f2bcb74b40459276aa65ff911c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletPickup
-  _type: 1
-  _ammoAmount: 2
+  _ammoType: 1
+  _amount: 8
