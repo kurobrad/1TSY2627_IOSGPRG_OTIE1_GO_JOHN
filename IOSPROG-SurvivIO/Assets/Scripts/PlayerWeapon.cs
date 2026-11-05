@@ -92,7 +92,6 @@ public class PlayerWeapon : MonoBehaviour
         {
             WeaponPickup.WeaponType activeWeapon = CurrentSlot == ActiveSlot.Primary ? PrimaryWeapon : SecondaryWeapon;
 
-            // only auto rifle fires continously while holding button
             if (activeWeapon == WeaponPickup.WeaponType.AutomaticRifle)
             {
                 AttemptFire();
@@ -135,6 +134,29 @@ public class PlayerWeapon : MonoBehaviour
 
         _isReloading = false;
         UpdateWeaponVisuals();
+    }
+
+    public void BTN_CycleWeapon()
+    {
+        if (CurrentSlot == ActiveSlot.Primary)
+        {
+            if (_hasSecondaryWeapon)
+            {
+                SwitchToSlot(ActiveSlot.Secondary);
+            }
+        }
+        else if (CurrentSlot == ActiveSlot.Secondary)
+        {
+            if (_hasPrimaryWeapon)
+            {
+                SwitchToSlot(ActiveSlot.Primary);
+            }
+        }
+        else
+        {
+            if (_hasPrimaryWeapon) SwitchToSlot(ActiveSlot.Primary);
+            else if (_hasSecondaryWeapon) SwitchToSlot(ActiveSlot.Secondary);
+        }
     }
 
     public void BTN_SelectPrimaryWeapon()

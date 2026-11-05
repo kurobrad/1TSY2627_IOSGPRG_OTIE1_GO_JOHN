@@ -15,6 +15,11 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (_owner != null && (other.gameObject == _owner || other.transform.IsChildOf(_owner.transform)))
+        {
+            return;
+        }
+
         if (other.GetComponent<Bullet>() != null ||
             other.GetComponentInParent<WeaponPickup>() != null ||
             other.GetComponentInParent<BulletPickup>() != null ||
@@ -23,19 +28,27 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        // damage players
         Player hitPlayer = other.GetComponentInParent<Player>();
         if (hitPlayer != null)
         {
-            if (hitPlayer.gameObject == _owner) return;
-
-            Debug.Log("player was hit");
             hitPlayer.TakeDamage(_damage);
             Destroy(gameObject);
             return;
         }
 
-        // Destroy on environment/obstacles
+        Enemy hitEnemy = other.GetComponentInParent<Enemy>();
+        if (hitEnemy != null)
+        {
+            hitEnemy.TakeDamage(_damage);
+            Destroy(gameObject);
+            return;
+        }
+
+        if (other.isTrigger)
+        {
+            return;
+        }
+
         Destroy(gameObject);
     }
 
