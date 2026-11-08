@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1088829036209811389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 531048016517243098}
+  - component: {fileID: 1350928871048426507}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &531048016517243098
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088829036209811389}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.25225, y: 0.28174, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1350928871048426507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088829036209811389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c634734e54f649409ceb0f7eb854c75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnManager
+  _pistolPrefab: {fileID: 3501069467727380355, guid: c679d97c00dccb44f84ed476130499b0, type: 3}
+  _shotgunPrefab: {fileID: 7057201511753624549, guid: fa9867dbac3cdca4ba0f555099de1c7b, type: 3}
+  _autoRiflePrefab: {fileID: 7829358399023323565, guid: c50cd68019a67fa4ea27be2bbc3d7cd7, type: 3}
+  _ammoPrefabs:
+  - {fileID: 3833646345616944947, guid: e0e22c42271e19147bbc704744b70e32, type: 3}
+  - {fileID: 4948483739844379539, guid: 176b26c748a60974197e0df8fb7ad7eb, type: 3}
+  - {fileID: 70558161320620848, guid: 4b19f9a478ba7f94094e8f2bb73e7466, type: 3}
+  _obstaclePrefabs:
+  - {fileID: 8942227109313819651, guid: 26ede4ac4a6c4294590fd3f2b1ed97aa, type: 3}
+  - {fileID: 6901988343111675893, guid: 06a7be0aaa0ad1343827140b99788096, type: 3}
+  - {fileID: 6230894044663468043, guid: 05aa2ded7569a1247a5bbb5ccdee6435, type: 3}
+  - {fileID: 9041450012638120880, guid: 26fb0edf9e805ca458fedbfe51023a6c, type: 3}
+  _obstacleSpawnCount: 80
+  _xMin: -90
+  _xMax: 90
+  _yMin: -45
+  _yMax: 45
+  _spawnOnStart: 1
+  _maxWeaponsPerType: 10
+  _maxTotalAmmo: 30
+  _respawnDelay: 2

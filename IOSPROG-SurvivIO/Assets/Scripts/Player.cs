@@ -1,6 +1,4 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(PlayerWeapon))]
 [RequireComponent(typeof(PlayerControls))]
@@ -89,12 +87,10 @@ public class Player : MonoBehaviour
             weaponHolder.gameObject.SetActive(false);
         }
 
-        StartCoroutine(CO_DeathDelayRoutine());
-    }
-
-    private IEnumerator CO_DeathDelayRoutine()
-    {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GameOverUI gameOverUI = FindAnyObjectByType<GameOverUI>();
+        if (gameOverUI != null)
+        {
+            gameOverUI.ShowGameOver();
+        }
     }
 }

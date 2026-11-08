@@ -5,13 +5,17 @@ public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance { get; private set; }
 
-    [Header("Weapon Prefabs (2 per type limit)")]
+    [Header("Weapon Prefabs")]
     [SerializeField] private GameObject _pistolPrefab;
     [SerializeField] private GameObject _shotgunPrefab;
     [SerializeField] private GameObject _autoRiflePrefab;
 
-    [Header("Ammo Prefabs (10 total limit)")]
+    [Header("Ammo Prefabs")]
     [SerializeField] private GameObject[] _ammoPrefabs;
+
+    [Header("Obstacle Prefabs & Settings")]
+    [SerializeField] private GameObject[] _obstaclePrefabs;
+    [SerializeField] private int _obstacleSpawnCount = 15;
 
     [Header("Map Boundaries for Random Spawning")]
     [SerializeField] private float _xMin = -90f;
@@ -42,6 +46,7 @@ public class SpawnManager : MonoBehaviour
         if (_spawnOnStart)
         {
             SpawnAllLoot();
+            SpawnObstacles();
         }
     }
 
@@ -56,6 +61,23 @@ public class SpawnManager : MonoBehaviour
             for (int i = 0; i < _maxTotalAmmo; i++)
             {
                 SpawnSingleRandomAmmo();
+            }
+        }
+    }
+
+    private void SpawnObstacles()
+    {
+        if (_obstaclePrefabs == null || _obstaclePrefabs.Length == 0) return;
+
+        for (int i = 0; i < _obstacleSpawnCount; i++)
+        {
+            int randomObstacleIndex = Random.Range(0, _obstaclePrefabs.Length);
+            GameObject chosenObstacle = _obstaclePrefabs[randomObstacleIndex];
+
+            if (chosenObstacle != null)
+            {
+                Quaternion randomRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+                Instantiate(chosenObstacle, GetRandomPosition(), randomRotation);
             }
         }
     }
