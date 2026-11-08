@@ -522,7 +522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa4468a5b1efa17469c10f291b321b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _moveSpeed: 7
+  _moveSpeed: 5
 --- !u!58 &188624758
 CircleCollider2D:
   m_ObjectHideFlags: 0

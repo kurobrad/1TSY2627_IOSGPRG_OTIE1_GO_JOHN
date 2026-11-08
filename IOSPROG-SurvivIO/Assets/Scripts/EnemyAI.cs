@@ -47,7 +47,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        Player player = FindFirstObjectByType<Player>();
+        Player player = FindAnyObjectByType<Player>();
         if (player != null)
         {
             _playerTransform = player.transform;
@@ -100,7 +100,6 @@ public class EnemyAI : MonoBehaviour
 
     private void AssignRandomGun()
     {
-        // 0 = Pistol, 1 = Shotgun, 2 = AutomaticRifle
         int randomIndex = Random.Range(0, 3);
         _assignedWeapon = (WeaponPickup.WeaponType)randomIndex;
 

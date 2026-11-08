@@ -26,7 +26,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        int currentEnemyCount = FindObjectsByType<Enemy>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
+        int currentEnemyCount = FindObjectsByType<Enemy>(FindObjectsInactive.Exclude).Length;
 
         if (currentEnemyCount < _maxEnemies && Time.time >= _nextSpawnTime)
         {

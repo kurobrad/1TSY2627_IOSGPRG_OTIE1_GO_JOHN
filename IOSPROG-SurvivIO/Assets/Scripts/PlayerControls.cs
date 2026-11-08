@@ -20,12 +20,20 @@ public class PlayerControls : MonoBehaviour
 
     private void Update()
     {
+        if (!enabled) return;
+
         ReadJoystickInput();
         HandleRotation();
     }
 
     private void FixedUpdate()
     {
+        if (!enabled)
+        {
+            _rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         HandleMovement();
     }
 
@@ -45,13 +53,11 @@ public class PlayerControls : MonoBehaviour
 
     private void HandleRotation()
     {
-        // aiming joystick rotation
         if (_aimInput.sqrMagnitude > 0.05f)
         {
             float targetAngle = Mathf.Atan2(_aimInput.y, _aimInput.x) * Mathf.Rad2Deg - 90f;
             _rb.rotation = targetAngle;
         }
-        // movement direction rotation
         else if (_moveInput.sqrMagnitude > 0.05f)
         {
             float targetAngle = Mathf.Atan2(_moveInput.y, _moveInput.x) * Mathf.Rad2Deg - 90f;

@@ -86,7 +86,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        if (_isReloading || CurrentSlot == ActiveSlot.None) return;
+        if (!enabled || _isReloading || CurrentSlot == ActiveSlot.None) return;
 
         if (_isHoldingFireButton && Time.time >= _nextFireTime)
         {
@@ -101,6 +101,8 @@ public class PlayerWeapon : MonoBehaviour
 
     public void AddAmmo(BulletPickup.AmmoType ammoType, int amount)
     {
+        if (!enabled) return;
+
         if (ammoType == BulletPickup.AmmoType.NineMM)
         {
             _reserve9mm = Mathf.Min(_reserve9mm + amount, _maxCarry9mm);
@@ -117,6 +119,8 @@ public class PlayerWeapon : MonoBehaviour
 
     public void EquipWeaponFromPickup(WeaponPickup.WeaponType newWeapon, int loadedAmmo)
     {
+        if (!enabled) return;
+
         if (newWeapon == WeaponPickup.WeaponType.Pistol)
         {
             SecondaryWeapon = newWeapon;
@@ -138,6 +142,8 @@ public class PlayerWeapon : MonoBehaviour
 
     public void BTN_CycleWeapon()
     {
+        if (!enabled) return;
+
         if (CurrentSlot == ActiveSlot.Primary)
         {
             if (_hasSecondaryWeapon)
@@ -161,16 +167,18 @@ public class PlayerWeapon : MonoBehaviour
 
     public void BTN_SelectPrimaryWeapon()
     {
-        if (_hasPrimaryWeapon) SwitchToSlot(ActiveSlot.Primary);
+        if (enabled && _hasPrimaryWeapon) SwitchToSlot(ActiveSlot.Primary);
     }
 
     public void BTN_SelectSecondaryWeapon()
     {
-        if (_hasSecondaryWeapon) SwitchToSlot(ActiveSlot.Secondary);
+        if (enabled && _hasSecondaryWeapon) SwitchToSlot(ActiveSlot.Secondary);
     }
 
     public void BTN_PointerDownFire()
     {
+        if (!enabled) return;
+
         _isHoldingFireButton = true;
 
         if (!_isReloading && Time.time >= _nextFireTime)
@@ -186,7 +194,7 @@ public class PlayerWeapon : MonoBehaviour
 
     public void BTN_Reload()
     {
-        if (!_isReloading && CurrentReserveAmmo > 0)
+        if (enabled && !_isReloading && CurrentReserveAmmo > 0)
         {
             StartCoroutine(CO_ReloadRoutine());
         }
@@ -201,7 +209,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void AttemptFire()
     {
-        if (CurrentSlot == ActiveSlot.None || _isReloading) return;
+        if (!enabled || CurrentSlot == ActiveSlot.None || _isReloading) return;
 
         WeaponPickup.WeaponType activeWeapon = CurrentSlot == ActiveSlot.Primary ? PrimaryWeapon : SecondaryWeapon;
 
@@ -283,7 +291,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private IEnumerator CO_ReloadRoutine()
     {
-        if (CurrentReserveAmmo <= 0 || _isReloading || CurrentSlot == ActiveSlot.None) yield break;
+        if (!enabled || CurrentReserveAmmo <= 0 || _isReloading || CurrentSlot == ActiveSlot.None) yield break;
 
         _isReloading = true;
         WeaponPickup.WeaponType activeWeapon = CurrentSlot == ActiveSlot.Primary ? PrimaryWeapon : SecondaryWeapon;
@@ -297,6 +305,8 @@ public class PlayerWeapon : MonoBehaviour
         };
 
         yield return new WaitForSeconds(reloadTime);
+
+        if (!enabled) yield break;
 
         if (CurrentSlot == ActiveSlot.Primary)
         {
